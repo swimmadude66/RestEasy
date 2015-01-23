@@ -1,0 +1,23 @@
+{
+  "name": "RestEasy",
+  "version": "1.0.0",
+  "description": "A ready made API system for GPIO control",
+  "readme": "README.md",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/swimmadude66/RestEasy.git"
+  },
+  "author": "Adam Yost",
+  "license": "Apache v2",
+  "bugs": {
+    "url": "https://github.com/swimmadude66/RestEasy/issues"
+  },
+  "homepage": "https://github.com/swimmadude66/RestEasy",
+  "dependencies": {
+    "express": "^4.11.1"
+  }
+}
