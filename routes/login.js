@@ -59,14 +59,14 @@ router.post('/api/login/', function(req, res){
     shasum.update(salt + pass);
     var pass_hash = shasum.digest('hex');
     console.log(uname + " " + pass_hash);
-    db.run("Select ID from Users Where username= '?' AND pass_hash= '?' AND isActive != 0 LIMIT 1", uname, pass_hash, function(err, row){
+    db.get("Select ID from Users where username=? AND pass_hash=? AND isActive!=0", uname, pass_hash, function(err, row){
         if(err){
             console.log(err);
             return res.send({success: false, error: err});
         }
         else{
             if(row != null){
-		        console.log('Logging in user ' + uname);
+		console.log('Logging in user ' + uname);
                 return res.send({success: true, user_id: row.ID, username: row.username});
             }
             else{
