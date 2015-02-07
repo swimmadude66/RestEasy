@@ -18,6 +18,10 @@
   },
   "homepage": "https://github.com/swimmadude66/RestEasy",
   "dependencies": {
-    "express": "^4.11.1"
+    "ejs": "^2.2.4",
+    "express": "^4.11.2",
+    "forever": "^0.14.1",
+    "restler": "^3.2.2",
+    "sqlite3": "^3.0.4"
   }
 }

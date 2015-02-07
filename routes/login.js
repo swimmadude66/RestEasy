@@ -17,41 +17,31 @@ function rand(rlen){
     return text;
 }
 
-// return angular front end
-router.get('/', function(req, res) {
-        res.render('index.html',{requestIP: req.ip});
-});
-
 router.post('/api/users/', function(req, res) {
             //create the user here
 	    h = req.headers;
-	    if(h.uname == null || h.pass.length < 6){
+	    var uname = h.uname.toString();
+	    var pass = h.pass.toString();
+	    if(uname == null || pass.length < 6){
 		console.log('Bad Username or pass');
 	    	return res.send( {error: 'Username or password do not meet requirements' });
     	    }
             console.log('Creating User');
 	    var shasum = crypto.createHash('sha256');
 	    var unamesha = crypto.createHash('sha256');
-	    unamesha.update(h.uname);
-            var salt = unamesha.digets('hex')[0:9];
-	    shasum.update(salt + h.pass);
-/*
-	    var sql = squel.insert()
-		.into("Users")
-		.set("Username", h.uname)
-		.set("PasswordHash", shasum.digest('hex'))
-		.toParam();
-	    connection.query(sql.text, sql.values, function(err, results){
+	    unamesha.update(uname);
+            var salt = unamesha.digest('hex');
+	    console.log('Salt = ' + salt);
+	    shasum.update(salt + pass);
+	    db.run("Insert Into Users (username, pass_hash, isAdmin, isActive) Values(?, ?, 0, 1 )", uname, shasum.digest('hex'), function(err){
 		if(err){
-			console.log("Error Adding user");
-			console.log(err)
-			res.send({success: 'False', error: err});
-		} else {
-		    console.log("Added user");
-           	    res.send({success: 'True'});
+		    console.log(err);
+   		    return res.send({success: false, error: err});
+		}
+		else{
+		    return res.send({success: true, message: 'User ' + uname + ' Added!'});
 		}
 	    });
-*/
 });
 
 // get user by userid (accessed at GET http://localhost:80/api/users)

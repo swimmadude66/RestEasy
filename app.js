@@ -1,10 +1,7 @@
 var express    = require('express'); 		// call express
 var app        = express(); 			// define our app using express
-var bodyParser = require('body-parser');
 var path       = require('path');
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
 app.set('view engine','html');
 app.engine('html', require('ejs').renderFile);
 app.use(express.static(path.join(__dirname, 'views')));
