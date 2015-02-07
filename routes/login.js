@@ -81,7 +81,7 @@ router.post('/api/login/', function(req, res){
 router.get('/api/users/:id', function(req, res) {
     //return all of the users
     console.log('returning Users');
-    db.get("Select * from Users where ID = ?", req.params.id, function(err, row){
+    db.get("Select ID, username, isActive, isAdmin from Users where ID = ?", req.params.id, function(err, row){
         if(err){
             console.log(err);
             return res.send({success: false, error: err});
@@ -96,7 +96,7 @@ router.get('/api/users/:id', function(req, res) {
 router.get('/api/users/', function(req, res) {
     //return all of the users
     console.log('returning Users');
-    db.all("Select * from Users Where isActive !=0", function(err, rows){
+    db.all("Select ID, username, isActive, isAdmin from Users", function(err, rows){
         if(err){
             console.log(err);
             return res.send({success: false, error: err});
