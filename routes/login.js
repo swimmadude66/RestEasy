@@ -22,6 +22,7 @@ router.post('/api/users/', function(req, res) {
 	h = req.headers;
 	var uname = h.uname.toString().trim().toLowerCase();
 	var pass = h.pass.toString().trim();
+    var admin = (h.admin != null && h.admin) ? 1 : 0;
 	if(uname == null || pass.length < 6){
         console.log('Bad Username or pass');
 	    return res.send( {error: 'Username or password do not meet requirements' });
@@ -32,7 +33,7 @@ router.post('/api/users/', function(req, res) {
 	unamesha.update(uname);
     var salt = unamesha.digest('hex');
 	shasum.update(salt + pass);
-	db.run("Insert Into Users (username, pass_hash, isAdmin, isActive) Values(?, ?, 0, 1 )", uname, shasum.digest('hex'), function(err){
+	db.run("Insert Into Users (username, pass_hash, isAdmin, isActive) Values(?, ?, ?, 1 )", uname, shasum.digest('hex'), admin, function(err){
 	    if(err){
             console.log(err);
    		    return res.send({success: false, error: err});
