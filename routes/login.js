@@ -20,10 +20,8 @@ function rand(rlen){
 router.post('/api/users/', function(req, res) {
     //create the user here
 	h = req.headers;
-	var uname = h.uname.toString();
-	var pass = h.pass.toString();
-    uname = uname.trim().toLowerCase();
-    pass = pass.trim();
+	var uname = h.uname.toString().trim().toLowerCase();
+	var pass = h.pass.toString().trim();
 	if(uname == null || pass.length < 6){
         console.log('Bad Username or pass');
 	    return res.send( {error: 'Username or password do not meet requirements' });
@@ -48,7 +46,8 @@ router.post('/api/users/', function(req, res) {
 router.post('/api/login/', function(req, res){
     //attempt to login user
     h = req.headers;
-    var uname = (h.uname.toString()).trim().ToLowerCase();
+    var uname = h.uname.toString().trim().toLowerCase();
+    var pass = h.pass.toString().trim();
     if(uname == null || pass.length < 6){
         console.log('Bad Username or pass');
         return res.send( {error: 'Username or password do not meet requirements' });
@@ -59,14 +58,16 @@ router.post('/api/login/', function(req, res){
     var salt = unamesha.digest('hex');
     shasum.update(salt + pass);
     var pass_hash = shasum.digest('hex');
-    db.run("Select ID from Users Where username = ? AND pass_hash = ? LIMIT 1", uname, pass_hash, function(err, row){
+    console.log(uname + " " + pass_hash);
+    db.run("Select ID from Users Where username= ? AND pass_hash= ? LIMIT 1", "'"+uname+"'", "'"+pass_hash+"'", function(err, row){
         if(err){
             console.log(err);
             return res.send({success: false, error: err});
         }
         else{
-            if(row.id != null){
-                return res.send({success: true, user_id: row.id, username: row.username});
+            if(row != null){
+		console.log('Logging in user ' + uname);
+                return res.send({success: true, user_id: row.ID, username: row.username});
             }
             else{
                 console.log("invalid login attempt for user " + uname);
