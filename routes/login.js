@@ -59,14 +59,14 @@ router.post('/api/login/', function(req, res){
     shasum.update(salt + pass);
     var pass_hash = shasum.digest('hex');
     console.log(uname + " " + pass_hash);
-    db.run("Select ID from Users Where username= ? AND pass_hash= ? LIMIT 1", "'"+uname+"'", "'"+pass_hash+"'", function(err, row){
+    db.run("Select ID from Users Where username= '?' AND pass_hash= '?' AND isActive != 0 LIMIT 1", uname, pass_hash, function(err, row){
         if(err){
             console.log(err);
             return res.send({success: false, error: err});
         }
         else{
             if(row != null){
-		console.log('Logging in user ' + uname);
+		        console.log('Logging in user ' + uname);
                 return res.send({success: true, user_id: row.ID, username: row.username});
             }
             else{
@@ -79,44 +79,33 @@ router.post('/api/login/', function(req, res){
 
 // get user by userid (accessed at GET http://localhost:80/api/users)
 router.get('/api/users/:id', function(req, res) {
-	     //return all of the users
-             console.log('returning Users');
-            var sql = squel.select()
-		.field("UserName")
-                .from("Users")
-		.where("ID = ?", req.params.id)
-		.toString();
-            connection.query(sql, function(err, results){
-                if(err){
-                        console.log(err)
-                        res.send({success: 'False', error: err});
-                } else {
-                    console.log("Added user");
-                    return res.json(results);
-                }
-            });
+    //return all of the users
+    console.log('returning Users');
+    db.run("Select * from Users where ID = ?", req.params.id, function(err, row){
+        if(err){
+            console.log(err);
+            return res.send({success: false, error: err});
+        }
+        else{
+            return res.send({success:true, user: row});
+        }
+    });
 });
 
 //get all users
 router.get('/api/users/', function(req, res) {
-             //return all of the users
-             console.log('returning Users');
-            var sql = squel.select()
-                .field("UserName")
-                .from("Users")
-                .toString();
-            connection.query(sql, function(err, results){
-                if(err){
-                        console.log(err)
-                        res.send({success: 'False', error: err});
-                } else {
-                    console.log("Added user");
-                    return res.json(results);
-                }
-            });
+    //return all of the users
+    console.log('returning Users');
+    db.run("Select * from Users Where isActive !=0", function(err, rows){
+        if(err){
+            console.log(err);
+            return res.send({success: false, error: err});
+        }
+        else{
+            return res.send({success:true, users:rows});
+        }
+    });
 });
-
-
 
 
 
