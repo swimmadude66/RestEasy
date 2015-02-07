@@ -22,7 +22,7 @@ router.post('/api/users/', function(req, res) {
 	h = req.headers;
 	var uname = h.uname.toString().trim().toLowerCase();
 	var pass = h.pass.toString().trim();
-    var admin = (h.admin != null && h.admin) ? 1 : 0;
+    var admin = (h.admin != null && h.admin===true) ? 1 : 0;
 	if(uname == null || pass.length < 6){
         console.log('Bad Username or pass');
 	    return res.send( {error: 'Username or password do not meet requirements' });
