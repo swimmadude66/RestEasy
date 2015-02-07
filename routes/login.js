@@ -2,20 +2,9 @@ var express = require('express');
 var rest = require('restler');
 var crypto = require('crypto');
 var router = express.Router();
-var fs = require("fs");
 var file = "/opt/RestEasy/RestEasy.db";
-var exists = fs.existsSync(file);
 var sqlite3 = require("sqlite3").verbose();
 var db = new sqlite3.Database(file);
-
-
-function rand(rlen){
-    var text = "";
-    var possible = "ABCDEFabcdef0123456789";
-    for( var i=0; i < rlen; i++ )
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-    return text;
-}
 
 router.post('/api/users/', function(req, res) {
     //create the user here
