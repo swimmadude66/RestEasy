@@ -18,30 +18,62 @@ function rand(rlen){
 }
 
 router.post('/api/users/', function(req, res) {
-            //create the user here
-	    h = req.headers;
-	    var uname = h.uname.toString();
-	    var pass = h.pass.toString();
-	    if(uname == null || pass.length < 6){
-		console.log('Bad Username or pass');
-	    	return res.send( {error: 'Username or password do not meet requirements' });
-    	    }
-            console.log('Creating User');
-	    var shasum = crypto.createHash('sha256');
-	    var unamesha = crypto.createHash('sha256');
-	    unamesha.update(uname);
-            var salt = unamesha.digest('hex');
-	    console.log('Salt = ' + salt);
-	    shasum.update(salt + pass);
-	    db.run("Insert Into Users (username, pass_hash, isAdmin, isActive) Values(?, ?, 0, 1 )", uname, shasum.digest('hex'), function(err){
-		if(err){
-		    console.log(err);
+    //create the user here
+	h = req.headers;
+	var uname = h.uname.toString();
+	var pass = h.pass.toString();
+    uname = uname.trim().toLowerCase();
+    pass = pass.trim();
+	if(uname == null || pass.length < 6){
+        console.log('Bad Username or pass');
+	    return res.send( {error: 'Username or password do not meet requirements' });
+    }
+    console.log('Creating User');
+	var shasum = crypto.createHash('sha256');
+	var unamesha = crypto.createHash('sha256');
+	unamesha.update(uname);
+    var salt = unamesha.digest('hex');
+	shasum.update(salt + pass);
+	db.run("Insert Into Users (username, pass_hash, isAdmin, isActive) Values(?, ?, 0, 1 )", uname, shasum.digest('hex'), function(err){
+	    if(err){
+            console.log(err);
    		    return res.send({success: false, error: err});
 		}
 		else{
-		    return res.send({success: true, message: 'User ' + uname + ' Added!'});
+            return res.send({success: true, message: 'User ' + uname + ' Added!'});
 		}
-	    });
+	});
+});
+
+router.post('/api/login/', function(req, res){
+    //attempt to login user
+    h = req.headers;
+    var uname = (h.uname.toString()).trim().ToLowerCase();
+    if(uname == null || pass.length < 6){
+        console.log('Bad Username or pass');
+        return res.send( {error: 'Username or password do not meet requirements' });
+    }
+    var shasum = crypto.createHash('sha256');
+    var unamesha = crypto.createHash('sha256');
+    unamesha.update(uname);
+    var salt = unamesha.digest('hex');
+    shasum.update(salt + pass);
+    var pass_hash = shasum.digest('hex');
+    db.run("Select ID from Users Where username = ? AND pass_hash = ? LIMIT 1", uname, pass_hash, function(err, row){
+        if(err){
+            console.log(err);
+            return res.send({success: false, error: err});
+        }
+        else{
+            if(row.id != null){
+                return res.send({success: true, user_id: row.id, username: row.username});
+            }
+            else{
+                console.log("invalid login attempt for user " + uname);
+                return res.send({success: false, error: 'Invalid username or password'});
+            }
+        }
+    });
 });
 
 // get user by userid (accessed at GET http://localhost:80/api/users)
@@ -84,42 +116,7 @@ router.get('/api/users/', function(req, res) {
 });
 
 
-router.post('/api/login/', function(req, res){
-    //attempt to login user
-    h = req.headers;
-    var sql = squel.select()
-        .from("Users")
-	.field("ID")
-        .field("Username")
-        .field("PasswordHash")
-        .field("Salt")
-	.where("Username = ?", h.uname)
-	.limit(1)
-        .toParam();
-    connection.query(sql.text, sql.values, function(err, rows){
-	if(err){
-            console.log("Error Finding");
-            console.log(err)
-            return res.send({success: 'False', error: err});
-	} else {
-	    var uid = rows[0].ID;
-            var salt = rows[0].Salt;
-	    var passwrd = rows[0].PasswordHash;
-	    var shasum = crypto.createHash('sha256');
-	    shasum.update(salt + h.pass);
-	    if(shasum.digest('hex') == passwrd){
-	        console.log('Logging in user: ' + h.uname);
-		var unamecrypt = rand(10) + uid.toString();
-		res.set('cuc', unamecrypt);
-		return res.send({Success: 'True'});
-	    }
-	    else{
-		console.log('Invalid Pass');
-		return res.send({Success: 'False', Error: 'passwords do not match'});
-	    }
-        }
-    });
-});
+
 
 
 //router.post('/api/logout/', function(req, res){
