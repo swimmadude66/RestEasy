@@ -11,7 +11,9 @@ var port = process.env.PORT || 80; 		// set our port
 // ROUTES FOR OUR API
 // =============================================================================
 var login = require('./routes/login.js');
+var pins = require('./routes/pins.js')
 app.use(login);
+app.use(pins);
 
 //keep this last, as it will return 404
 app.use(function(req, res, next){
