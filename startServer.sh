@@ -16,3 +16,4 @@ mv logs/output.log logs/output_1.log
 
 forever start -w --watchIgnore logs/ --watchIgnore *.log --watchIgnore */node_modules/ --watchIgnore views/bower_components/ --watchIgnore RestEasy.db -e logs/errors.log -o logs/output.log app.js
 
+
