@@ -1,12 +1,13 @@
 var express    = require('express'); 		// call express
 var app        = express(); 			// define our app using express
 var path       = require('path');
+var bodyParser = require('body-parser');
 
 app.set('view engine','html');
 app.engine('html', require('ejs').renderFile);
 app.use(express.static(path.join(__dirname, 'views')));
-
-var port = process.env.PORT || 80; 		// set our port
+app.use(bodyParser.json())
+var port = process.env.PORT || 3000;
 
 // ROUTES FOR OUR API
 // =============================================================================
