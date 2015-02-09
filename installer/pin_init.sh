@@ -18,3 +18,8 @@ echo 131 > /sys/class/gpio/export
 echo 165 > /sys/class/gpio/export
 echo 182 > /sys/class/gpio/export
 echo 183 > /sys/class/gpio/export
+
+chmod 0777 /sys/class/gpio/*
+chmod 0777 /sys/class/gpio/*/*
+chmod 0777 /sys/class/gpio/*/*/*
+chmod 0777 /sys/class/gpio/*/*/*/*
